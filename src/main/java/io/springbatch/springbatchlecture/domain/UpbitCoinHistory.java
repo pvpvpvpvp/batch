@@ -23,13 +23,13 @@ public class UpbitCoinHistory {
 //    @JoinColumn(name = "CoinId")
 //    private CoinName coinId;
 
-    private Long coinId;
+    private Long coinId;//timestamp
 
     private Long maxSupply;
     private Long totalSupply;
     private BigDecimal price;
     private BigDecimal volume24h;
-    private Date lastUpdate;
+    private Date lastUpdate;//trade_time_utc
     private BigDecimal lowPrice;
     private BigDecimal highPrice;
 
