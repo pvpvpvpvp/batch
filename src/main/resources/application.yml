@@ -24,7 +24,7 @@ spring:
       on-profile: mysql
   datasource:
     hikari:
-      jdbc-url: jdbc:mysql://min-and-wise.czrx92xp9fx8.ap-northeast-2.rds.amazonaws.com:3306/coin_batch_db
+      jdbc-url: jdbc:mysql://min-and-wise.czrx92xp9fx8.ap-northeast-2.rds.amazonaws.com:3306/junho
       username: hecto
       password: mr8nCwEj7N4GDBvAbcgI
       driver-class-name: com.mysql.cj.jdbc.Driver

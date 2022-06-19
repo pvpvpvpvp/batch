@@ -56,10 +56,13 @@ public class UpbitCoinHistoryTest {
         BigDecimal low_price = BigDecimal.valueOf(jsonObject.getDouble("low_price"));
         BigDecimal high_price = BigDecimal.valueOf(jsonObject.getDouble("high_price"));
 
+        UpbitCoinHistory upbitCoinHistory = new UpbitCoinHistory();
+        log.info(String.valueOf(upbitCoinHistory.getIdx()));
 
-        UpbitCoinHistory upbitCoinHistory = new UpbitCoinHistory(timestamp, trade_price, acc_trade_volume_24h, trade_date_kst, low_price, high_price);
-        log.info("!!!!!!"+upbitCoinHistory.toString());
-        upbitCoinRepository.save(upbitCoinHistory);
+//        UpbitCoinHistory upbitCoinHistory =
+//                new UpbitCoinHistory(timestamp, trade_price, acc_trade_volume_24h, trade_date_kst, low_price, high_price);
+//        log.info("!!!!!!"+upbitCoinHistory.toString());
+//        upbitCoinRepository.save(upbitCoinHistory);
         //when
 
 

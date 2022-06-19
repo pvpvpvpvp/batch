@@ -14,4 +14,8 @@ public class UpbitCoinRepository {
     public void save(UpbitCoinHistory upbitCoinHistory) {
         em.persist(upbitCoinHistory);
     }
+
+    public UpbitCoinHistory find (Long coinId){
+        return em.find(UpbitCoinHistory.class, coinId);
+    }
 }

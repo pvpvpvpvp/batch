@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor
 public class UpbitCoinHistory {
 
+    @Column
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
