@@ -22,7 +22,7 @@ public class PresentCoin {
         Request request = new Request.Builder()
                 .url("https://api.upbit.com/v1/ticker?markets=KRW-BTC")
                 .get()
-                .addHeader("Accept", "application/json")
+                .addHeader("Accept", "aypplication/json")
                 .build();
 
         Response response = client.newCall(request).execute();
