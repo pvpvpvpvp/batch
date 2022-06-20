@@ -13,7 +13,7 @@ import java.util.List;
 public class CoinName {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long coinIdx;
+    private Long coinId;
 
     private String name;
     private String symbol;
