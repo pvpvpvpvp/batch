@@ -23,44 +23,26 @@ public class JobInstanceConfiguration {
 
     @Bean
     public Job job(){
-        return jobBuilderFactory.get("job")
-                .start(step1())
-                .next(step2())
+        return jobBuilderFactory.get("job1")
+                .start(step2())
+                .next(step1())
                 .build();
     }
 
     @Bean
     public Step step2() {
-        return stepBuilderFactory.get("step1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-
-                        System.out.println("step1 has executed");
-//                        JobParameters jobParameters = stepContribution.getStepExecution().getJobExecution().getJobParameters();
-//                        jobParameters.getString("name");
-//                        jobParameters.getLong("seq");
-//                        jobParameters.getDate("date");
-//                        jobParameters.getDouble("age");
-//
-//                        Map<String, Object> jobParameters1 = chunkContext.getStepContext().getJobParameters();
-//                        System.out.println("jobParameters = " + jobParameters);
-//                        System.out.println("jobParameters1 = " + jobParameters1);
-
-
-                        return RepeatStatus.FINISHED;
-                    }
-                })
+        return stepBuilderFactory.get("step2")
+                .tasklet(new OrderBookApi())
                 .build();
     }
 
     @Bean
     public Step step1() {
-        return stepBuilderFactory.get("step2")
+        return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step2 has executed");
+                        System.out.println("step1 has executed");
 //                        throw  new RuntimeException("step2 has failed");
 //
                         return RepeatStatus.FINISHED;
