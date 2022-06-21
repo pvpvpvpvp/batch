@@ -30,12 +30,14 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
   batch:
     job:
-      enabled: false
+#      enabled: false
+      names: ${job.name:NONE}
     jdbc:
       initialize-schema: always
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         # show_sql: true
