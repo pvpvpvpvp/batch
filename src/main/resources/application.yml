@@ -29,10 +29,14 @@ spring:
       password: mr8nCwEj7N4GDBvAbcgI
       driver-class-name: com.mysql.cj.jdbc.Driver
   batch:
-#    job:
-#      enabled: false
+    job:
+      names: ${job.name:NONE}
+    #      enabled: false
     jdbc:
       initialize-schema: always
+#      table-prefix: SYSTEM_
+
+
   jpa:
     hibernate:
       ddl-auto: create

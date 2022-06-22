@@ -1,10 +1,7 @@
 package io.springbatch.springbatchlecture;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -20,10 +17,10 @@ import java.util.Map;
 public class JobInstanceConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-
+    private final OrderBookApi orderBookApi;
     @Bean
     public Job job(){
-        return jobBuilderFactory.get("job1")
+        return jobBuilderFactory.get("job1112")
                 .start(step2())
                 .next(step1())
                 .build();
@@ -32,7 +29,7 @@ public class JobInstanceConfiguration {
     @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
-                .tasklet(new OrderBookApi())
+                .tasklet(orderBookApi)
                 .build();
     }
 
@@ -44,6 +41,7 @@ public class JobInstanceConfiguration {
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
                         System.out.println("step1 has executed");
 //                        throw  new RuntimeException("step2 has failed");
+                        System.out.println("stepContribution.getStepExecution().getJobExecution().getJobInstance().getJobName() = " + stepContribution.getStepExecution().getJobExecution().getJobInstance().getJobName());
 //
                         return RepeatStatus.FINISHED;
                     }
