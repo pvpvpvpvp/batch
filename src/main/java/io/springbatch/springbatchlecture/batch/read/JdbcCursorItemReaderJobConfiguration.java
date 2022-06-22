@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.batch;
+package io.springbatch.springbatchlecture.batch.read;
 
 import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,10 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.sql.DataSource;
@@ -21,7 +23,8 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 @Slf4j
 @Configuration
-public class HistoryBatch {
+
+public class JdbcCursorItemReaderJobConfiguration  {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
@@ -29,7 +32,7 @@ public class HistoryBatch {
 
 
     @Bean
-    public Job jsonJob1_batchBuild() {
+    public Job jdbcCursorItemReaderJob() {
         return jobBuilderFactory.get("jdbcCursorItemReaderJob")
                 .start(jdbcCursorItemReaderStep())
                 .build();

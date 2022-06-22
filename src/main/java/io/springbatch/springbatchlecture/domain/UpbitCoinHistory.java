@@ -14,6 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter @Setter
 @ToString
 @NoArgsConstructor
+@Table
 public class UpbitCoinHistory {
 
     @Column
@@ -44,5 +45,9 @@ public class UpbitCoinHistory {
         this.lastUpdate = lastUpdate;
         this.lowPrice = lowPrice;
         this.highPrice = highPrice;
+    }
+
+    public UpbitCoinHistory(Long coinId, BigDecimal price, Date lastUpdate) {
+
     }
 }
