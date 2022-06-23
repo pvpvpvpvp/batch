@@ -26,7 +26,7 @@ public class UpbitCoinHistory {
 //    private CoinName coinId;
 
     //https://api.upbit.com/v1/ticker
-    private Long coinId;//timestamp
+    private Long coinId;//
 
     private Long maxSupply;//
     private Long totalSupply;
@@ -47,7 +47,10 @@ public class UpbitCoinHistory {
         this.highPrice = highPrice;
     }
 
-    public UpbitCoinHistory(Long coinId, BigDecimal price, Date lastUpdate) {
 
+    public UpbitCoinHistory(Long coinId, BigDecimal price, Date lastUpdate) {
+        this.coinId=coinId;
+        this.price=price;
+        this.lastUpdate=lastUpdate;
     }
 }

@@ -1,10 +1,12 @@
 package io.springbatch.springbatchlecture.batch.api;
 
+import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
 import lombok.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,16 +15,39 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Data
-@ToString
 public class UpbitCoinHistoryApi {
 
-    private Long timestamp;
-    private BigDecimal price;
-    private BigDecimal volume24h;
-    private Date lastUpdate;
-    private BigDecimal lowPrice;
-    private BigDecimal highPrice;
+    private Date timestamp;
+    private BigDecimal trade_price;
+    private BigDecimal acc_trade_volume_24h;
+    private Date trade_date;
+    private BigDecimal low_price;
+    private BigDecimal high_price;
+
+    public UpbitCoinHistory change_UpbitCoinHistory(){
+
+        UpbitCoinHistory upbitCoinHistory = new UpbitCoinHistory();
+
+        upbitCoinHistory.setLowPrice(low_price);
+        upbitCoinHistory.setHighPrice(high_price);
+        upbitCoinHistory.setPrice(trade_price);
+//        upbitCoinHistory.setCoinId();
+        upbitCoinHistory.setVolume24h(acc_trade_volume_24h);
+        upbitCoinHistory.setLastUpdate(timestamp);
+        return upbitCoinHistory;
+    }
+
+
+//    public UpbitCoinHistory(Long coinId, BigDecimal price, Date lastUpdate) {
+//        this.coinId=coinId;
+//        this.price=price;
+//        this.lastUpdate=lastUpdate;
+//    }
+//
+//    @Column
+//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long idx;
+
 //        "market": "KRW-BTC",
 //                "trade_date": "20220622",
 //                "trade_time": "071758",
