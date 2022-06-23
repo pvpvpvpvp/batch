@@ -1,9 +1,11 @@
-package io.springbatch.springbatchlecture.batch.write;
+package io.springbatch.springbatchlecture.batch;
 
 import io.springbatch.springbatchlecture.batch.api.UpbitCoinHistoryApi;
 import io.springbatch.springbatchlecture.domain.CoinName;
 import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
-import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
+import io.springbatch.springbatchlecture.jobparmeter.CustomJobParameterIncrementer;
+import io.springbatch.springbatchlecture.processor.CustomItemProcessorCoinToHistory;
+import io.springbatch.springbatchlecture.processor.CustomItemProcessorHistory;
 import io.springbatch.springbatchlecture.repository.UpbitApiCoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,37 +13,25 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.*;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class JpaItemWriterJobConfiguration {
+public class HistoryJpaItemWriterJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final EntityManagerFactory entityManagerFactory;
@@ -54,12 +44,45 @@ public class JpaItemWriterJobConfiguration {
     private boolean checkRestCall = false; //RestAPI 호출여부 판단
     private int nextIndex = 0;//리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
     @Bean
-    public Job jpaItemWriterJob() {
+    public Job jpaItemWriterJob(){
         return jobBuilderFactory.get("jpaItemWriterJob")
-                .start(jpaItemWriterStep())
-                .incrementer(new RunIdIncrementer())
+                .start(coinReader())
+                .next(jpaItemWriterStep())
+                .incrementer(new CustomJobParameterIncrementer())
                 .build();
     }
+
+    @Bean
+    public Step coinReader(){
+        return stepBuilderFactory.get("coinReader")
+                .<CoinName, CoinName>chunk(chunkSize)
+                .reader(CoinItemReader())
+                .processor(CoinProcessor())
+                .writer(CoinWriter())
+                .build();
+    }
+
+    private ItemWriter<? super CoinName> CoinWriter() {
+        return items -> System.out.println("items = " + items);
+    }
+
+    @Bean
+    public ItemProcessor<? super CoinName,? extends CoinName> CoinProcessor() {
+        return new CustomItemProcessorCoinToHistory();
+    }
+
+    @Bean
+    public JpaPagingItemReader<CoinName> CoinItemReader() {
+
+        return new JpaPagingItemReaderBuilder()
+                .name("CoinItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .pageSize(10)
+                .queryString("select c from CoinName c")
+                .build();
+
+    }
+
     @Bean
     public Step jpaItemWriterStep() {
         log.info("jpaItemWriterStep");

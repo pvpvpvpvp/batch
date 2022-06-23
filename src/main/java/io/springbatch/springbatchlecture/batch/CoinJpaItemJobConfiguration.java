@@ -1,8 +1,7 @@
 package io.springbatch.springbatchlecture.batch;
 
 
-import io.springbatch.springbatchlecture.api.CoinNameApi;
-import io.springbatch.springbatchlecture.api.OrderBook;
+import io.springbatch.springbatchlecture.batch.api.CoinNameApi;
 import io.springbatch.springbatchlecture.domain.CoinName;
 import io.springbatch.springbatchlecture.jobparmeter.CustomJobParameterIncrementer;
 import io.springbatch.springbatchlecture.processor.CustomItemProcessorCoinName;
@@ -15,10 +14,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class JpaItemWriterJobConfiguration {
+public class CoinJpaItemJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final EntityManagerFactory entityManagerFactory;
@@ -44,8 +40,8 @@ public class JpaItemWriterJobConfiguration {
     private List<CoinNameApi> nameList = new ArrayList<>();
 
     @Bean
-    public Job jpaItemWriterJob() {
-        return jobBuilderFactory.get("jpaItemWriterJob")
+    public Job jpaCoinSave() {
+        return jobBuilderFactory.get("JpaCoinSave")
                 .start(jpaItemWriterStep())
                 .incrementer(new CustomJobParameterIncrementer())
                 .build();

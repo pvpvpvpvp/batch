@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.batch.write;
+package io.springbatch.springbatchlecture.processor;
 
 import io.springbatch.springbatchlecture.batch.api.UpbitCoinHistoryApi;
 import io.springbatch.springbatchlecture.domain.CoinName;

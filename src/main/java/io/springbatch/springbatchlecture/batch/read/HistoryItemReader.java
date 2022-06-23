@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.batch;
+package io.springbatch.springbatchlecture.batch.read;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;

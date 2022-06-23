@@ -1,11 +1,13 @@
-package io.springbatch.springbatchlecture.api;
+package io.springbatch.springbatchlecture.batch.api;
 
 import io.springbatch.springbatchlecture.domain.CoinName;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@ToString
 public class CoinNameApi {
 
     private String market;
