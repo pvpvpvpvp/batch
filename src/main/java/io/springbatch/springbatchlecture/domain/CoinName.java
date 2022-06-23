@@ -1,6 +1,8 @@
 package io.springbatch.springbatchlecture.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,7 +12,11 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor
 public class CoinName {
+    public CoinName(String name) {
+        this.name = name;
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long coinId;

@@ -1,5 +1,7 @@
-package io.springbatch.springbatchlecture;
+package io.springbatch.springbatchlecture.batch;
 
+import io.springbatch.springbatchlecture.step.tasklet.OrderBookApi;
+import io.springbatch.springbatchlecture.jobparmeter.CustomJobParameterIncrementer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -10,8 +12,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
-
 @Configuration
 @RequiredArgsConstructor
 public class JobInstanceConfiguration {
@@ -20,9 +20,11 @@ public class JobInstanceConfiguration {
     private final OrderBookApi orderBookApi;
     @Bean
     public Job job(){
-        return jobBuilderFactory.get("job1112")
+        return jobBuilderFactory.get("upbit")
                 .start(step2())
                 .next(step1())
+                .incrementer(new
+                        CustomJobParameterIncrementer())
                 .build();
     }
 
