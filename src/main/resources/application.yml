@@ -1,10 +1,8 @@
-
 spring:
   profiles:
     active: mysql
 
 ---
-spring:
   config:
     activate:
       on-profile: local
@@ -19,6 +17,9 @@ spring:
       initialize-schema: embedded
 ---
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   config:
     activate:
       on-profile: mysql
@@ -32,14 +33,14 @@ spring:
     job:
       names: ${job.name:NONE}
     #      enabled: false
-    jdbc:
-      initialize-schema: always
-#      table-prefix: SYSTEM_
+#    jdbc:
+#      initialize-schema: always
+  #      table-prefix: SYSTEM_
 
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         # show_sql: true
