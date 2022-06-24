@@ -42,23 +42,23 @@ public class CoinJpaItemJobConfiguration {
     @Bean
     public Job jpaCoinSave() {
         return jobBuilderFactory.get("JpaCoinSave")
-                .start(jpaItemWriterStep())
+                .start(jpaCoinItemWriterStep())
                 .incrementer(new CustomJobParameterIncrementer())
                 .build();
     }
     @Bean
-    public Step jpaItemWriterStep() {
+    public Step jpaCoinItemWriterStep() {
         log.info("jpaItemWriterStep");
         return stepBuilderFactory.get("jpaItemWriterStep")
                 .<CoinNameApi, CoinName>chunk(chunkSize)
-                .reader(ItemWriterReader())
-                .processor(jpaItemProcessor())
-                .writer(jpaItemWriter())
+                .reader(CoinItemWriterReader())
+                .processor(jpaCoinItemProcessor())
+                .writer(jpaCoinItemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<CoinNameApi> ItemWriterReader() {
+    public ItemReader<CoinNameApi> CoinItemWriterReader() {
         log.info("BatchItemWriterReader");
         return new ItemReader<CoinNameApi>() {
             @Override
@@ -89,11 +89,11 @@ public class CoinJpaItemJobConfiguration {
 //                .build();
     }
     @Bean
-    public ItemProcessor<CoinNameApi, CoinName> jpaItemProcessor() {
+    public ItemProcessor<CoinNameApi, CoinName> jpaCoinItemProcessor() {
         return new CustomItemProcessorCoinName();
     }
     @Bean
-    public ItemWriter<CoinName> jpaItemWriter() {
+    public ItemWriter<CoinName> jpaCoinItemWriter() {
         return new JpaItemWriterBuilder<CoinName>()
                 .usePersist(true)
                 .entityManagerFactory(entityManagerFactory)

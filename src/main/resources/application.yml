@@ -33,9 +33,9 @@ spring:
     job:
       names: ${job.name:NONE}
     #      enabled: false
-#    jdbc:
-#      initialize-schema: always
-  #      table-prefix: SYSTEM_
+    jdbc:
+      initialize-schema: always
+#        table-prefix: SYSTEM_
 
 
   jpa:

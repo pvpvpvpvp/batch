@@ -48,8 +48,8 @@ public class JdbcBatchItemWriterJobConfigurationTest {
         UpbitCoinHistory upbitCoinHistory;
 
         for (int i=0; i<upbitCoinHistoryApiList.size();i++){
-            upbitCoinHistory=upbitCoinHistoryApi.change_UpbitCoinHistory(upbitCoinHistoryApiList.get(i));
-            upbitCoinRepository.save(upbitCoinHistory);
+//            upbitCoinHistory=upbitCoinHistoryApi.change_UpbitCoinHistory(upbitCoinHistoryApiList.get(i));
+//            upbitCoinRepository.save(upbitCoinHistory);
         }
 //        System.out.println(upbitCoinHistoryApiList.get(2));
 //        upbitCoinHistory=upbitCoinHistoryApi.change_UpbitCoinHistory(upbitCoinHistoryApiList.get(0));
