@@ -1,7 +1,7 @@
 package io.springbatch.springbatchlecture.step.tasklet;
 
 import com.google.gson.Gson;
-import io.springbatch.springbatchlecture.api.OrderBook;
+import io.springbatch.springbatchlecture.batch.api.OrderBook;
 import io.springbatch.springbatchlecture.client.ExampleClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 
 
 import java.net.URI;
@@ -61,6 +60,7 @@ public class OrderBookApi implements Tasklet {
 //        Gson json = new Gson();
 //        String message = json.toJson(stringMono);
 //        c.send(message);
+
 
 
         return RepeatStatus.FINISHED;

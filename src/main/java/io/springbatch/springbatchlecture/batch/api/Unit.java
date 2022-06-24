@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.api;
+package io.springbatch.springbatchlecture.batch.api;
 
 
 import lombok.Getter;

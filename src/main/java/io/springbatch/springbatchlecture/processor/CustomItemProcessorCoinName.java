@@ -1,6 +1,6 @@
 package io.springbatch.springbatchlecture.processor;
 
-import io.springbatch.springbatchlecture.api.CoinNameApi;
+import io.springbatch.springbatchlecture.batch.api.CoinNameApi;
 import io.springbatch.springbatchlecture.domain.CoinName;
 import org.modelmapper.ModelMapper;
 import org.springframework.batch.item.ItemProcessor;
