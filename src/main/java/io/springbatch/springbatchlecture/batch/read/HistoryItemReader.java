@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.cbor.Jackson2CborEncoder;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,6 +21,8 @@ import javax.sql.DataSource;
 
 
 @RequiredArgsConstructor
+@Component
+@StepScope
 public class HistoryItemReader implements ItemReader<UpbitCoinHistory> {
 
 
