@@ -42,28 +42,28 @@ public class CoinJpaItemJobConfiguration {
     @Bean
     public Job jpaCoinSave() {
         return jobBuilderFactory.get("JpaCoinSave")
-                .start(jpaItemWriterStep())
+                .start(jpaItemWriterCoinNameStep())
                 .incrementer(new CustomJobParameterIncrementer())
                 .build();
     }
     @Bean
-    public Step jpaItemWriterStep() {
+    public Step jpaItemWriterCoinNameStep() {
         log.info("jpaItemWriterStep");
         return stepBuilderFactory.get("jpaItemWriterStep")
                 .<CoinNameApi, CoinName>chunk(chunkSize)
-                .reader(ItemWriterReader())
-                .processor(jpaItemProcessor())
+                .reader(ItemWriterCoinNameReader())
+                .processor(jpaItemCoinNameProcessor())
                 .writer(jpaItemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<CoinNameApi> ItemWriterReader() {
+    public ItemReader<CoinNameApi> ItemWriterCoinNameReader() {
         log.info("BatchItemWriterReader");
         return new ItemReader<CoinNameApi>() {
             @Override
             public CoinNameApi read() throws Exception {
-                if (checkRestCall == false) {//한번도 호출 않았는지 체크
+                if (!checkRestCall) {//한번도 호출 않았는지 체크
                     WebClient webClient = WebClient.builder()
                             .baseUrl("https://api.upbit.com/v1/market/all?isDetails=true")
                             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -89,7 +89,7 @@ public class CoinJpaItemJobConfiguration {
 //                .build();
     }
     @Bean
-    public ItemProcessor<CoinNameApi, CoinName> jpaItemProcessor() {
+    public ItemProcessor<CoinNameApi, CoinName> jpaItemCoinNameProcessor() {
         return new CustomItemProcessorCoinName();
     }
     @Bean
