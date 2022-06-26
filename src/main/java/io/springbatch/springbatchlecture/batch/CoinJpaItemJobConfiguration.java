@@ -42,28 +42,28 @@ public class CoinJpaItemJobConfiguration {
     @Bean
     public Job jpaCoinSave() {
         return jobBuilderFactory.get("JpaCoinSave")
-                .start(jpaItemWriterCoinNameStep())
+                .start(jpaCoinItemWriterStep())
                 .incrementer(new CustomJobParameterIncrementer())
                 .build();
     }
     @Bean
-    public Step jpaItemWriterCoinNameStep() {
+    public Step jpaCoinItemWriterStep() {
         log.info("jpaItemWriterStep");
         return stepBuilderFactory.get("jpaItemWriterStep")
                 .<CoinNameApi, CoinName>chunk(chunkSize)
-                .reader(ItemWriterCoinNameReader())
-                .processor(jpaItemCoinNameProcessor())
-                .writer(jpaItemWriter())
+                .reader(CoinItemWriterReader())
+                .processor(jpaCoinItemProcessor())
+                .writer(jpaCoinItemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<CoinNameApi> ItemWriterCoinNameReader() {
+    public ItemReader<CoinNameApi> CoinItemWriterReader() {
         log.info("BatchItemWriterReader");
         return new ItemReader<CoinNameApi>() {
             @Override
             public CoinNameApi read() throws Exception {
-                if (!checkRestCall) {//한번도 호출 않았는지 체크
+                if (checkRestCall == false) {//한번도 호출 않았는지 체크
                     WebClient webClient = WebClient.builder()
                             .baseUrl("https://api.upbit.com/v1/market/all?isDetails=true")
                             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -89,11 +89,11 @@ public class CoinJpaItemJobConfiguration {
 //                .build();
     }
     @Bean
-    public ItemProcessor<CoinNameApi, CoinName> jpaItemCoinNameProcessor() {
+    public ItemProcessor<CoinNameApi, CoinName> jpaCoinItemProcessor() {
         return new CustomItemProcessorCoinName();
     }
     @Bean
-    public ItemWriter<CoinName> jpaItemWriter() {
+    public ItemWriter<CoinName> jpaCoinItemWriter() {
         return new JpaItemWriterBuilder<CoinName>()
                 .usePersist(true)
                 .entityManagerFactory(entityManagerFactory)
