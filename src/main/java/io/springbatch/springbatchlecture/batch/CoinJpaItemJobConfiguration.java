@@ -2,7 +2,7 @@ package io.springbatch.springbatchlecture.batch;
 
 
 import io.springbatch.springbatchlecture.batch.api.CoinNameApi;
-import io.springbatch.springbatchlecture.domain.CoinName;
+import io.springbatch.springbatchlecture.domain.Coin;
 import io.springbatch.springbatchlecture.jobparmeter.CustomJobParameterIncrementer;
 import io.springbatch.springbatchlecture.processor.CustomItemProcessorCoinName;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class CoinJpaItemJobConfiguration {
     public Step jpaCoinItemWriterStep() {
         log.info("jpaItemWriterStep");
         return stepBuilderFactory.get("jpaItemWriterStep")
-                .<CoinNameApi, CoinName>chunk(chunkSize)
+                .<CoinNameApi, Coin>chunk(chunkSize)
                 .reader(CoinItemWriterReader())
                 .processor(jpaCoinItemProcessor())
                 .writer(jpaCoinItemWriter())
@@ -70,6 +71,19 @@ public class CoinJpaItemJobConfiguration {
                             .build();
                     nameList = webClient.get()
                             .retrieve().bodyToFlux(CoinNameApi.class).toStream().collect(Collectors.toList());
+//                    이중 반복문으로 완전 탐색 비교 중복된 데이터 인덱스를 기준인덱스에 합치고 중복 인덱스는 제거한다.(압축)
+//                    이후에 프로세싱 부분에서 market에 적힌 문자열을 기준으로 is_ 의 boolean값을 적어준다.
+                    for (int i = 0; i < nameList.size(); i++) {
+                        for (int j = i+1; j < nameList.size(); j++) {
+                            if(nameList.get(i).getMarket().split("-")[1].equals(nameList.get(j).getMarket().split("-")[1])){
+                                nameList.get(i)
+                                        .setMarket(
+                                                nameList.get(i).getMarket()+"-,"+nameList.get(j).getMarket()
+                                        );
+                                nameList.remove(j);
+                            }
+                        }
+                    }
                     checkRestCall = true;
                 }
 
@@ -89,15 +103,14 @@ public class CoinJpaItemJobConfiguration {
 //                .build();
     }
     @Bean
-    public ItemProcessor<CoinNameApi, CoinName> jpaCoinItemProcessor() {
+    public ItemProcessor<CoinNameApi, Coin> jpaCoinItemProcessor() {
         return new CustomItemProcessorCoinName();
     }
     @Bean
-    public ItemWriter<CoinName> jpaCoinItemWriter() {
-        return new JpaItemWriterBuilder<CoinName>()
+    public ItemWriter<Coin> jpaCoinItemWriter() {
+        return new JpaItemWriterBuilder<Coin>()
                 .usePersist(true)
                 .entityManagerFactory(entityManagerFactory)
                 .build();
     }
-
 }

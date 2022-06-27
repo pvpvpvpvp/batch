@@ -1,11 +1,9 @@
 package io.springbatch.springbatchlecture.batch;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.GsonBuilder;
 import io.springbatch.springbatchlecture.batch.api.UpbitCoinHistoryApi;
-import io.springbatch.springbatchlecture.domain.CoinName;
+import io.springbatch.springbatchlecture.domain.Coin;
 import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
 import io.springbatch.springbatchlecture.jobparmeter.CustomJobParameterIncrementer;
 import io.springbatch.springbatchlecture.processor.CustomItemProcessorCoinToHistory;
@@ -33,9 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.persistence.EntityManagerFactory;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,9 +47,8 @@ public class HistoryJpaItemWriterJobConfiguration {
     private static final int chunkSize = 10;
     private static final int step1ChunkSize = 10;
     //api 처리단위
-    private int requestSize = 10;
+    private static final int requestSize = 10;
     private int requestIndex = 0;
-
 
     private List<UpbitCoinHistoryApi> upbitCoinHistoryApiList = null;
     private boolean checkRestCall = false; //RestAPI 호출여부 판단
@@ -69,7 +65,7 @@ public class HistoryJpaItemWriterJobConfiguration {
     @Bean
     public Step coinReader(){
         return stepBuilderFactory.get("coinReader")
-                .<CoinName, CoinName>chunk(step1ChunkSize)
+                .<Coin, Coin>chunk(step1ChunkSize)
                 .reader(CoinItemReader())
                 .processor(CoinProcessor())
                 .writer(CoinWriter())
@@ -78,20 +74,26 @@ public class HistoryJpaItemWriterJobConfiguration {
     }
 
     @Bean
-    public ItemWriter<? super CoinName> CoinWriter() {
-       return new ItemWriter<CoinName>() {
+    public ItemWriter<? super Coin> CoinWriter() {
+       return new ItemWriter<Coin>() {
            private StepExecution stepExecution;
            @Override
-           public void write(List<? extends CoinName> items) throws Exception {
+           public void write(List<? extends Coin> items) throws Exception {
                System.out.println("Items from processor : " + items.toString());
                ExecutionContext stepContext = this.stepExecution.getExecutionContext();
-               List<CoinName> coinData = new ArrayList<>();
-               Object o = stepContext.get("COIN_NAME");
+               List<Coin> coinData = new ArrayList<>();
+               Object o = stepContext.get("COIN");
                if (o!=null){
-                   coinData.addAll((Collection<? extends CoinName>) o);
+//                   coinData.addAll((Collection<? extends Coin>) o);
+                   System.out.println("o = " + o);
+                   List<Coin> list = Arrays.asList(new GsonBuilder().create().fromJson((String) o, Coin[].class));
+//                   Coin coin = new Gson().fromJson((String) o,Coin.class);
+                   System.out.println("list = " + list);
+                   coinData.addAll(list);
                    coinData.addAll(items);
                }else coinData.addAll(items);
-               stepContext.put("COIN_NAME", coinData);
+               //역직렬화 이슈를 피하기 위해 Json 형태로 저장  -> Unable to deserialize the execution context
+               stepContext.put("COIN", new Gson().toJson(coinData));
            }
            @BeforeStep
            public  void saveStepExcution(StepExecution stepExecution){
@@ -101,18 +103,18 @@ public class HistoryJpaItemWriterJobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<? super CoinName,? extends CoinName> CoinProcessor() {
+    public ItemProcessor<? super Coin,? extends Coin> CoinProcessor() {
         return new CustomItemProcessorCoinToHistory();
     }
 
     @Bean
-    public JpaPagingItemReader<CoinName> CoinItemReader() {
+    public JpaPagingItemReader<Coin> CoinItemReader() {
 
         return new JpaPagingItemReaderBuilder()
                 .name("CoinItemReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(10)
-                .queryString("select c from CoinName c")
+                .queryString("select c from Coin c where is_krw=1")
                 .build();
     }
 
@@ -138,8 +140,8 @@ public class HistoryJpaItemWriterJobConfiguration {
 
             @Override
             public UpbitCoinHistoryApi read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-
-                String jsonElements = new Gson().toJson(someObject);
+                List<Coin> list = Arrays.asList(new GsonBuilder().create().fromJson((String) someObject, Coin[].class));
+                String jsonElements = new Gson().toJson(list);
                 JSONArray jsonElements1 = new JSONArray(jsonElements.toString());
                 if (!checkRestCall) {//한번도 호출 않았는지 체크
 
@@ -148,7 +150,11 @@ public class HistoryJpaItemWriterJobConfiguration {
                     for (int i = requestIndex*requestSize; i < requestSize+requestIndex*requestSize; i++) {
                         if (i==j) break;
                         JSONObject jsonObject = (JSONObject) jsonElements1.get(i);
-                        path +="markets=" +jsonObject.get("symbol")+ "&";
+                        System.out.println("jsonObject.get(\"is_krw\") = " + jsonObject.get("is_krw"));
+                        if ((boolean)jsonObject.get("is_krw")){
+                            path +="markets=KRW-" +jsonObject.get("symbol")+ "&";
+                        }
+//
 
                     }
                     requestIndex++;
@@ -181,13 +187,13 @@ public class HistoryJpaItemWriterJobConfiguration {
                     if (nextIndex==requestSize) {checkRestCall = false; nextIndex=0;};
 
                 }
-                return nextCollect;//DTO 하나씩 반환한다. Rest 호출시 데이터가 없으면 null로 반
+                return nextCollect;//DTO 하나씩 반환한다. Rest 호출시 데이터가 없으면 null로 반환
             }
             @BeforeStep
             public void InsertDate(StepExecution stepExecution) {
                 JobExecution jobExecution = stepExecution.getJobExecution();
                 ExecutionContext jobContext = jobExecution.getExecutionContext();
-                this.someObject = jobContext.get("COIN_NAME");
+                this.someObject = jobContext.get("COIN");
             }
         };
 
@@ -210,7 +216,7 @@ public class HistoryJpaItemWriterJobConfiguration {
     public ExecutionContextPromotionListener promotionListener () {
         ExecutionContextPromotionListener executionContextPromotionListener = new ExecutionContextPromotionListener();
         // 데이터 공유를 위해 사용될 key값을 미리 빈에 등록해주어야 합니다.
-        executionContextPromotionListener.setKeys(new String[]{"COIN_NAME"});
+        executionContextPromotionListener.setKeys(new String[]{"COIN"});
 
         return executionContextPromotionListener;
     }

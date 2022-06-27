@@ -36,8 +36,6 @@ spring:
     jdbc:
       initialize-schema: always
 #        table-prefix: SYSTEM_
-
-
   jpa:
     hibernate:
       ddl-auto: none

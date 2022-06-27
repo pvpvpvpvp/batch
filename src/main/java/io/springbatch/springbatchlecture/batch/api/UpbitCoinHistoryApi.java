@@ -19,7 +19,7 @@ public class UpbitCoinHistoryApi {
 
     private Date timestamp;
     private BigDecimal trade_price;
-    private BigDecimal acc_trade_volume_24h;
+    private BigDecimal trade_volume;
     private Date trade_date;
     private BigDecimal low_price;
     private BigDecimal high_price;
@@ -34,7 +34,7 @@ public class UpbitCoinHistoryApi {
         upbitCoinHistory.setHighPrice(high_price);
         upbitCoinHistory.setPrice(trade_price);
         upbitCoinHistory.setCoinId(coin_id);
-        upbitCoinHistory.setVolume24h(acc_trade_volume_24h);
+        upbitCoinHistory.setVolume(trade_volume);
         upbitCoinHistory.setLastUpdate(timestamp);
         return upbitCoinHistory;
     }

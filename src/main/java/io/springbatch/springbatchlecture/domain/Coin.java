@@ -11,19 +11,23 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor
 @ToString
-public class CoinName {
-    public CoinName(String name) {
+public class Coin {
+    public Coin(String name) {
         this.name = name;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long coinId;
 
+    @Column(length = 20)
     private String name;
+    @Column(length = 255)
+    private String enName;
+    @Column(length = 20)
     private String symbol;
-    private String slug;
-    private Date firstHistory;
-    private Date lastHistory;
+    private boolean is_krw;
+    private boolean is_btc;
+    private boolean is_usdt;
 
     //fk 설정
 //    @OneToMany(mappedBy = "coinId")

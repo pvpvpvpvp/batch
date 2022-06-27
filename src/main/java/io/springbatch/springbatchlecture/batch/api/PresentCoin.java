@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.domain;
+package io.springbatch.springbatchlecture.batch.api;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

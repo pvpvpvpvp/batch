@@ -1,13 +1,11 @@
 package io.springbatch.springbatchlecture.client;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * This example demonstrates how to create a websocket connection to a server. Only the most

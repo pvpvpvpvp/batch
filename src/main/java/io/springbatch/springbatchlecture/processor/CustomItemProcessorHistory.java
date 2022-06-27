@@ -1,7 +1,6 @@
 package io.springbatch.springbatchlecture.processor;
 
 import io.springbatch.springbatchlecture.batch.api.UpbitCoinHistoryApi;
-import io.springbatch.springbatchlecture.domain.CoinName;
 import io.springbatch.springbatchlecture.domain.UpbitCoinHistory;
 import org.modelmapper.ModelMapper;
 import org.springframework.batch.item.ItemProcessor;
