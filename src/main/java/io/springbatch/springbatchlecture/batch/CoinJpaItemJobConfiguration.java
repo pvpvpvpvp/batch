@@ -50,7 +50,7 @@ public class CoinJpaItemJobConfiguration {
     @Bean
     public Step jpaCoinItemWriterStep() {
         log.info("jpaItemWriterStep");
-        return stepBuilderFactory.get("jpaItemWriterStep")
+        return stepBuilderFactory.get("jpaCoinItemWriterStep")
                 .<CoinNameApi, Coin>chunk(chunkSize)
                 .reader(CoinItemWriterReader())
                 .processor(jpaCoinItemProcessor())

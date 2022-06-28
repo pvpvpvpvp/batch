@@ -54,8 +54,8 @@ public class HistoryJpaItemWriterJobConfiguration {
     private boolean checkRestCall = false; //RestAPI 호출여부 판단
     private int nextIndex = 0;//리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
     @Bean
-    public Job jpaItemWriterJob(){
-        return jobBuilderFactory.get("jpaItemWriterJob")
+    public Job historyJob(){
+        return jobBuilderFactory.get("historyJob")
                 .start(coinReader())
                 .next(jpaItemWriterStep())
                 .incrementer(new CustomJobParameterIncrementer())
@@ -172,7 +172,7 @@ public class HistoryJpaItemWriterJobConfiguration {
 
                     checkRestCall = true;//다음 read() 부터는 재호출 방지하기 위해 true로 변경
                 }
-                System.out.println("checkRestCall = true");
+                System.out.println("checkRestCall ="+checkRestCall);
                 UpbitCoinHistoryApi nextCollect = null; //ItemReader는 반복문으로 동작한다. 하나씩 Writer로 전달해야 한다.s
                 System.out.println("requestIndex = " + requestIndex);
                 System.out.println("upbitCoinHistoryApiList = " + upbitCoinHistoryApiList.size());
@@ -185,7 +185,8 @@ public class HistoryJpaItemWriterJobConfiguration {
                     System.out.println("nextCollect = " + nextCollect.getCoin_id());
                     System.out.println("nextIndex = " + nextIndex);
                     if (nextIndex==requestSize) {checkRestCall = false; nextIndex=0;};
-
+                }else {
+                    checkRestCall = false; nextIndex=0; requestIndex=0;
                 }
                 return nextCollect;//DTO 하나씩 반환한다. Rest 호출시 데이터가 없으면 null로 반환
             }
